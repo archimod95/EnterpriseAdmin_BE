@@ -28,7 +28,7 @@ namespace EnterpriseAdmin_BE.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql(_configuration.GetConnectionString("server=localhost;user=root;database=dev_enterprise_administration;password=Metallicajr.3;port=3306"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
+                optionsBuilder.UseMySql(_configuration.GetConnectionString("dev-enterprise-administration-connection"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
             }
         }
 

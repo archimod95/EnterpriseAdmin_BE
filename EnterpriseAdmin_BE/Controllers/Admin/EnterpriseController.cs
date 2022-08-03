@@ -25,8 +25,37 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
             catch (Exception err)
             {
                 return BadRequest(err.Message);
+            }          
+        }
+
+        [HttpPost("create-enterprise")]
+        public async Task<ActionResult> createEnterprise(ApiEnterprises newEnterprise)
+        {
+            try
+            {
+                bool success = await Core.Admin.Core.createEnterpriseAsync(_config, newEnterprise);
+                
+                return success ? Ok() : BadRequest(newEnterprise);
             }
-            
-        } 
+            catch (Exception err)
+            {
+                return BadRequest(err.Message);
+            }
+        }
+
+        [HttpPost("update-enterprise")]
+        public async Task<ActionResult> updateEnterprise(ApiEnterprises newEnterprise)
+        {
+            try
+            {
+                bool success = await Core.Admin.Core.updateEnterpriseAsync(_config, newEnterprise);
+
+                return success ? Ok() : BadRequest(newEnterprise);
+            }
+            catch (Exception err)
+            {
+                return BadRequest(err.Message);
+            }
+        }
     }
 }
