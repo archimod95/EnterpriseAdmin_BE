@@ -16,7 +16,7 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
         }
 
         [HttpGet("get-all-enterprises")]
-        public async Task<ActionResult<IEnumerable<ApiEnterprises>>> getAllEnterprises()
+        public async Task<ActionResult<IEnumerable<ApiEnterprises>>> getAllEnterprisesAsync()
         {
             try
             {
@@ -29,7 +29,7 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
         }
 
         [HttpPost("create-enterprise")]
-        public async Task<ActionResult> createEnterprise(ApiEnterprises newEnterprise)
+        public async Task<ActionResult> createEnterpriseAsync(ApiEnterprises newEnterprise)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
         }
 
         [HttpPost("update-enterprise")]
-        public async Task<ActionResult> updateEnterprise(ApiEnterprises newEnterprise)
+        public async Task<ActionResult> updateEnterpriseAsync(ApiEnterprises newEnterprise)
         {
             try
             {

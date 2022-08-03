@@ -7,7 +7,6 @@ namespace EnterpriseAdmin_BE.Core.Admin
 {
     public partial class Core
     {
-
         public async static Task<IEnumerable<ApiEnterprises>> getAllEnterprisesAsync(IConfiguration configuration)
         {
             MySqlDbContext context = new MySqlDbContext(configuration);
@@ -15,6 +14,7 @@ namespace EnterpriseAdmin_BE.Core.Admin
                                 .AsNoTracking()
                                 .OrderBy(x => x.Name)
                                 .ToArrayAsync();
+
             return enterprises.ToApiEnterprises();
         }
 
@@ -25,6 +25,7 @@ namespace EnterpriseAdmin_BE.Core.Admin
                 MySqlDbContext context = new MySqlDbContext(configuration);
                 context.Enterprises.Add(newEnterprise.ToEnterprise());
                 await context.SaveChangesAsync();
+
                 return true;
             }
             catch
@@ -52,6 +53,7 @@ namespace EnterpriseAdmin_BE.Core.Admin
                     await context.SaveChangesAsync();
                     return true;
                 }
+
                 return false;
             }
             catch
@@ -59,7 +61,5 @@ namespace EnterpriseAdmin_BE.Core.Admin
                 return false;
             }
         }
-
-
     }
 }
