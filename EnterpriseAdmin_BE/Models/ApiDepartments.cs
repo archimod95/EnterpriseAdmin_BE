@@ -22,4 +22,9 @@
 
         public int? IdEnterprise { get; set; }
     }
+
+    public class ApiDepartmentsById
+    {
+        public int Id { get; set; }
+    }
 }

@@ -24,4 +24,15 @@
 
         public string Surname { get; set; }
     }
+
+    public class ApiEmployeeByEmail
+    {
+        public string Email { get; set; }
+    }
+
+    public class ApiEmployeeById
+    {
+        public int Id { get; set; }
+    }
+
 }

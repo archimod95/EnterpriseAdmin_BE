@@ -18,24 +18,30 @@ namespace EnterpriseAdmin_BE.Core.Admin
             return enterprises.ToApiEnterprises();
         }
 
-        public async static Task<bool> createEnterpriseAsync(IConfiguration configuration, ApiEnterprises newEnterprise)
+        public async static Task<ApiResponse> createEnterpriseAsync(IConfiguration configuration, ApiEnterprises newEnterprise)
         {
+            ApiResponse response = new ApiResponse();
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
+                newEnterprise.Created_Date = DateTime.Now;
+                newEnterprise.Modified_Date = DateTime.Now;
                 context.Enterprises.Add(newEnterprise.ToEnterprise());
                 await context.SaveChangesAsync();
 
-                return true;
+                response.Success = true;
+                return response;
             }
             catch
             {
-                return false;
+                response.Success = false;
+                return response;
             }
         }
 
-        public async static Task<bool> updateEnterpriseAsync(IConfiguration configuration, ApiEnterprises modifiedEnterprise)
+        public async static Task<ApiResponse> updateEnterpriseAsync(IConfiguration configuration, ApiEnterprises modifiedEnterprise)
         {
+            ApiResponse response = new ApiResponse();
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
@@ -45,21 +51,36 @@ namespace EnterpriseAdmin_BE.Core.Admin
                     enterprise.CreatedBy = modifiedEnterprise.Created_By;
                     enterprise.CreatedDate = modifiedEnterprise.Created_Date;
                     enterprise.ModifiedBy = modifiedEnterprise.Modified_By;
-                    enterprise.ModifiedDate = modifiedEnterprise.Modified_Date;
+                    enterprise.ModifiedDate = DateTime.Now;
                     enterprise.Status = modifiedEnterprise.Status;
                     enterprise.Address = modifiedEnterprise.Address;
                     enterprise.Phone = modifiedEnterprise.Phone;
 
                     await context.SaveChangesAsync();
-                    return true;
+
+                    response.Success = true;
+                    return response;
                 }
 
-                return false;
+                response.Success = true;
+                return response;
             }
             catch
             {
-                return false;
+                response.Success = true;
+                return response;
             }
+        }
+
+        public async static Task<ApiEnterprises> getEnterpriseByIdAsync(IConfiguration configuration, int id)
+        {
+            MySqlDbContext context = new MySqlDbContext(configuration);
+            var enterprises = await context.Enterprises
+                                .AsNoTracking()
+                                .Where(x => x.Id == id)
+                                .FirstOrDefaultAsync();
+
+            return enterprises.ToApiEnterprise();
         }
     }
 }

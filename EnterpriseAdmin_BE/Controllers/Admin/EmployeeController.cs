@@ -28,14 +28,35 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
             }
         }
 
-        [HttpPost("create-employee")]
-        public async Task<ActionResult> createEmployeeAsync(ApiEmployees newEmployee)
+        [HttpPost("save-employee-changes")]
+        public async Task<ActionResult<ApiResponse>> createEmployeeAsync(ApiEmployees newEmployee)
         {
             try
             {
-                bool success = await Core.Admin.Core.createEmployeeAsync(_config, newEmployee);
+                if (newEmployee.Id ==0)
+                {
+                    return await Core.Admin.Core.createEmployeeAsync(_config, newEmployee);
+                }
+                else
+                {
+                    return await Core.Admin.Core.updateEmployeeAsync(_config, newEmployee);
+                }
+                
+            }
+            catch
+            {
+                ApiResponse response = new ApiResponse();
+                response.Success = false;
+                return response;
+            }
+        }
 
-                return success ? Ok() : BadRequest(newEmployee);
+        [HttpPost("get-employees-by-email")]
+        public async Task<ActionResult<ApiEmployees>> getEmployeeByEmailAsync(ApiEmployeeByEmail email)
+        {
+            try
+            {
+                return Ok(await Core.Admin.Core.getEmployeeByEmailAsync(_config, email.Email));
             }
             catch (Exception err)
             {
@@ -43,14 +64,12 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
             }
         }
 
-        [HttpPost("update-employee")]
-        public async Task<ActionResult> updateEmployeeAsync(ApiEmployees newEmployees)
+        [HttpPost("get-employees-by-id")]
+        public async Task<ActionResult<ApiEmployees>> getEmployeeByIdAsync(ApiEmployeeById id)
         {
             try
             {
-                bool success = await Core.Admin.Core.updateEmployeeAsync(_config, newEmployees);
-
-                return success ? Ok() : BadRequest(newEmployees);
+                return Ok(await Core.Admin.Core.getEmployeeByIdAsync(_config, id.Id));
             }
             catch (Exception err)
             {

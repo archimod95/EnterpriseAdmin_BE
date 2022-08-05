@@ -28,29 +28,35 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
             }
         }
 
-        [HttpPost("create-department-employee")]
-        public async Task<ActionResult> createDepartmentEmployeeAsync(ApiDepartmentsEmployee newDepartmentsEmployee)
+        [HttpPost("save-department-employee-changes")]
+        public async Task<ActionResult<ApiResponse>> saveDepartmentEnterpriseChangesAsync(ApiDepartmentsEmployee incomingEnterprise)
         {
             try
             {
-                bool success = await Core.Admin.Core.createDepartmentEmployeeAsync(_config, newDepartmentsEmployee);
+                if (incomingEnterprise.Id == 0)
+                {
+                    return await Core.Admin.Core.createDepartmentEmployeeAsync(_config, incomingEnterprise);
+                }
+                else
+                {
+                    return await Core.Admin.Core.updateDepartmentEmployeeAsync(_config, incomingEnterprise);
+                }
 
-                return success ? Ok() : BadRequest(newDepartmentsEmployee);
             }
-            catch (Exception err)
+            catch
             {
-                return BadRequest(err.Message);
+                ApiResponse response = new ApiResponse();
+                response.Success = false;
+                return response;
             }
         }
 
-        [HttpPost("update-department-employee")]
-        public async Task<ActionResult> updateDepartmentEmployeeAsync(ApiDepartmentsEmployee newDepartmentsEmployee)
+        [HttpPost("get-deparments-employees-by-id")]
+        public async Task<ActionResult<ApiEmployees>> getDepartmentsEmployeesByIdAsync(ApiDepartmentsEmployee id)
         {
             try
             {
-                bool success = await Core.Admin.Core.updateDepartmentEmployeeAsync(_config, newDepartmentsEmployee);
-
-                return success ? Ok() : BadRequest(newDepartmentsEmployee);
+                return Ok(await Core.Admin.Core.getDeparmentsEmployeesByIdAsync(_config, id.Id));
             }
             catch (Exception err)
             {

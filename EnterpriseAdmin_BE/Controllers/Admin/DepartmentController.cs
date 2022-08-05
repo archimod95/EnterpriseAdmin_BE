@@ -28,29 +28,35 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
             }
         }
 
-        [HttpPost("create-department")]
-        public async Task<ActionResult> createDepartmentAsync(ApiDepartments newDepartments)
+        [HttpPost("save-departments-changes")]
+        public async Task<ActionResult<ApiResponse>> saveDepartmentsChangesAsync(ApiDepartments incomingEnterprise)
         {
             try
             {
-                bool success = await Core.Admin.Core.createDepartmentAsync(_config, newDepartments);
+                if (incomingEnterprise.Id == 0)
+                {
+                    return await Core.Admin.Core.createDepartmentAsync(_config, incomingEnterprise);
+                }
+                else
+                {
+                    return await Core.Admin.Core.updateDepartmentAsync(_config, incomingEnterprise);
+                }
 
-                return success ? Ok() : BadRequest(newDepartments);
             }
-            catch (Exception err)
+            catch
             {
-                return BadRequest(err.Message);
+                ApiResponse response = new ApiResponse();
+                response.Success = false;
+                return response;
             }
         }
 
-        [HttpPost("update-department")]
-        public async Task<ActionResult> updateDepartmentAsync(ApiDepartments newDepartments)
+        [HttpPost("get-department-by-id")]
+        public async Task<ActionResult<ApiEnterprises>> getDepartmentByIdAsync(ApiDepartmentsById id)
         {
             try
             {
-                bool success = await Core.Admin.Core.updateDepartmentAsync(_config, newDepartments);
-
-                return success ? Ok() : BadRequest(newDepartments);
+                return Ok(await Core.Admin.Core.getEnterpriseByIdAsync(_config, id.Id));
             }
             catch (Exception err)
             {

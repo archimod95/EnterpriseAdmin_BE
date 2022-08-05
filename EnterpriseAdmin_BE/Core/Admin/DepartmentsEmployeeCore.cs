@@ -12,30 +12,36 @@ namespace EnterpriseAdmin_BE.Core.Admin
             MySqlDbContext context = new MySqlDbContext(configuration);
             var departmentsEmployees = await context.DepartmentsEmployees
                                 .AsNoTracking()
+                                .Include(x => x.IdDepartmentNavigation)
+                                .Include(x => x.IdEmployeeNavigation)
                                 .OrderBy(x => x.Id)
                                 .ToArrayAsync();
 
             return departmentsEmployees.ToApiDepartmentsEmployee();
         }
 
-        public async static Task<bool> createDepartmentEmployeeAsync(IConfiguration configuration, ApiDepartmentsEmployee newDepartmentEmployee)
+        public async static Task<ApiResponse> createDepartmentEmployeeAsync(IConfiguration configuration, ApiDepartmentsEmployee newDepartmentEmployee)
         {
+            ApiResponse response = new ApiResponse();
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
                 context.DepartmentsEmployees.Add(newDepartmentEmployee.ToDepartmentEmployee());
                 await context.SaveChangesAsync();
 
-                return true;
+                response.Success = true;
+                return response;
             }
             catch
             {
-                return false;
+                response.Success = false;
+                return response;
             }
         }
 
-        public async static Task<bool> updateDepartmentEmployeeAsync(IConfiguration configuration, ApiDepartmentsEmployee modifiedDepartmentEmployee)
+        public async static Task<ApiResponse> updateDepartmentEmployeeAsync(IConfiguration configuration, ApiDepartmentsEmployee modifiedDepartmentEmployee)
         {
+            ApiResponse response = new ApiResponse();
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
@@ -51,15 +57,32 @@ namespace EnterpriseAdmin_BE.Core.Admin
                     departmentEmployee.IdEmployee = modifiedDepartmentEmployee.IdEmployee;
 
                     await context.SaveChangesAsync();
-                    return true;
+
+                    response.Success = true;
+                    return response;
                 }
 
-                return false;
+                response.Success = false;
+                return response;
             }
             catch
             {
-                return false;
+                response.Success = false;
+                return response;
             }
+        }
+
+        public async static Task<ApiDepartmentsEmployee> getDeparmentsEmployeesByIdAsync(IConfiguration configuration, int id)
+        {
+            MySqlDbContext context = new MySqlDbContext(configuration);
+            var departmentsEmployees = await context.DepartmentsEmployees
+                                .AsNoTracking()
+                                .Include(x => x.IdDepartmentNavigation)
+                                .Include(x => x.IdEmployeeNavigation)
+                                .Where(x => x.Id == id)
+                                .FirstOrDefaultAsync();
+
+            return departmentsEmployees.ToApiDepartmentEmployee();
         }
     }
 }

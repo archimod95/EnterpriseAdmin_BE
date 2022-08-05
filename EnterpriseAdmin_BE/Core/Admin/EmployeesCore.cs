@@ -18,24 +18,28 @@ namespace EnterpriseAdmin_BE.Core.Admin
             return employees.ToApiEmployees();
         }
 
-        public async static Task<bool> createEmployeeAsync(IConfiguration configuration, ApiEmployees newEmployees)
+        public async static Task<ApiResponse> createEmployeeAsync(IConfiguration configuration, ApiEmployees newEmployees)
         {
+            ApiResponse response = new ApiResponse();
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
                 context.Employees.Add(newEmployees.ToEmployee());
                 await context.SaveChangesAsync();
 
-                return true;
+                response.Success = true;
+                return response;
             }
             catch
             {
-                return false;
+                response.Success = false;
+                return response;
             }
         }
 
-        public async static Task<bool> updateEmployeeAsync(IConfiguration configuration, ApiEmployees modifiedEmployees)
+        public async static Task<ApiResponse> updateEmployeeAsync(IConfiguration configuration, ApiEmployees modifiedEmployees)
         {
+            ApiResponse response = new ApiResponse();
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
@@ -54,15 +58,41 @@ namespace EnterpriseAdmin_BE.Core.Admin
                     employees.Surname = modifiedEmployees.Surname;
 
                     await context.SaveChangesAsync();
-                    return true;
+                    
+                    response.Success = true;
+                    return response;
                 }
 
-                return false;
+                response.Success = false;
+                return response;
             }
             catch
             {
-                return false;
+                response.Success = false;
+                return response;
             }
+        }
+
+        public async static Task<ApiEmployees> getEmployeeByEmailAsync(IConfiguration configuration, string email)
+        {
+            MySqlDbContext context = new MySqlDbContext(configuration);
+            var employees = await context.Employees
+                                .AsNoTracking()
+                                .Where(x => x.Email == email)
+                                .FirstOrDefaultAsync();
+
+            return employees.ToApiEmployee();
+        }
+
+        public async static Task<ApiEmployees> getEmployeeByIdAsync(IConfiguration configuration, int id)
+        {
+            MySqlDbContext context = new MySqlDbContext(configuration);
+            var employees = await context.Employees
+                                .AsNoTracking()
+                                .Where(x => x.Id == id)
+                                .FirstOrDefaultAsync();
+
+            return employees.ToApiEmployee();
         }
     }
 }

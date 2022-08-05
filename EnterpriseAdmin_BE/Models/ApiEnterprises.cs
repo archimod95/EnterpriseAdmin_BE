@@ -20,4 +20,9 @@
 
         public string Phone { get; set; }
     }
+    public class ApiEnterprisesById 
+    {
+        public int Id { get; set; }
+    }
+
 }

@@ -28,29 +28,35 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
             }          
         }
 
-        [HttpPost("create-enterprise")]
-        public async Task<ActionResult> createEnterpriseAsync(ApiEnterprises newEnterprise)
+        [HttpPost("save-enterprise-changes")]
+        public async Task<ActionResult<ApiResponse>> saveEnterpriseChangesAsync(ApiEnterprises incomingEnterprise)
         {
             try
             {
-                bool success = await Core.Admin.Core.createEnterpriseAsync(_config, newEnterprise);
-                
-                return success ? Ok() : BadRequest(newEnterprise);
+                if (incomingEnterprise.id == 0)
+                {
+                    return await Core.Admin.Core.createEnterpriseAsync(_config, incomingEnterprise);
+                }
+                else
+                {
+                    return await Core.Admin.Core.updateEnterpriseAsync(_config, incomingEnterprise);
+                }
+
             }
-            catch (Exception err)
+            catch
             {
-                return BadRequest(err.Message);
+                ApiResponse response = new ApiResponse();
+                response.Success = false;
+                return response;
             }
         }
 
-        [HttpPost("update-enterprise")]
-        public async Task<ActionResult> updateEnterpriseAsync(ApiEnterprises newEnterprise)
+        [HttpPost("get-enterprise-by-id")]
+        public async Task<ActionResult<ApiEnterprises>> getEnterpriseByIdAsync(ApiEnterprisesById id)
         {
             try
             {
-                bool success = await Core.Admin.Core.updateEnterpriseAsync(_config, newEnterprise);
-
-                return success ? Ok() : BadRequest(newEnterprise);
+                return Ok(await Core.Admin.Core.getEnterpriseByIdAsync(_config, id.Id));
             }
             catch (Exception err)
             {

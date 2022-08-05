@@ -18,4 +18,9 @@
 
         public int? IdEmployee { get; set; }
     }
+
+    public class ApiDepartmentsEmployeeById
+    {
+        public int Id { get; set; }
+    }
 }
