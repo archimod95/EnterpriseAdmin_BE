@@ -2,6 +2,7 @@
 using EnterpriseAdmin_BE.Extensions;
 using EnterpriseAdmin_BE.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace EnterpriseAdmin_BE.Core.Admin
 {
@@ -10,24 +11,12 @@ namespace EnterpriseAdmin_BE.Core.Admin
         public async static Task<IEnumerable<ApiDepartments>> getAllDepartmentsAsync(IConfiguration configuration)
         {
             MySqlDbContext context = new MySqlDbContext(configuration);
-            var departments = from dp in context.Departments
-                              join en in context.Enterprises on dp.IdEnterprise equals en.Id
-                              select new ApiDepartments
-                              {
-                                  Id = dp.Id,
-                                  Created_Date = dp.CreatedDate,
-                                  Created_By = dp.CreatedBy,
-                                  Modified_By = dp.ModifiedBy,
-                                  Modified_Date = dp.ModifiedDate,
-                                  Status = dp.Status,
-                                  Description = dp.Description,
-                                  Name = dp.Name,
-                                  Phone = dp.Phone,
-                                  IdEnterprise = en.Id,
-                                  EnterpriseName = en.Name
-                              };
+            var departments = await context.Departments
+                                .AsNoTracking()
+                                .OrderBy(x => x.Name)
+                                .ToArrayAsync();
 
-            return departments;
+            return departments.ToApiDepartments();
         }
 
         public async static Task<ApiResponse> createDepartmentAsync(IConfiguration configuration, ApiDepartments newDepartment)
