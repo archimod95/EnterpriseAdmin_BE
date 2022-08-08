@@ -56,7 +56,7 @@ namespace EnterpriseAdmin_BE.Controllers.Admin
         {
             try
             {
-                return Ok(await Core.Admin.Core.getEnterpriseByIdAsync(_config, id.Id));
+                return Ok(await Core.Admin.Core.getDepartmentByIdAsync(_config, id.Id));
             }
             catch (Exception err)
             {

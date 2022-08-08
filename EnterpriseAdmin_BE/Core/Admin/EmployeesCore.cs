@@ -27,6 +27,23 @@ namespace EnterpriseAdmin_BE.Core.Admin
                 context.Employees.Add(newEmployees.ToEmployee());
                 await context.SaveChangesAsync();
 
+                int max = context.Employees.Max(u => u.Id);
+
+                if (newEmployees.idDepartment != 0)
+                {
+                    ApiDepartmentsEmployee apiDepEmp = new ApiDepartmentsEmployee();
+                    apiDepEmp.IdEmployee = max;
+                    apiDepEmp.IdDepartment = newEmployees.idDepartment;
+                    apiDepEmp.CreatedDate = DateTime.Now;
+                    apiDepEmp.CreatedBy = newEmployees.Created_By;
+                    apiDepEmp.ModifiedDate = DateTime.Now; 
+                    apiDepEmp.ModifiedBy = newEmployees.Modified_By;
+                    apiDepEmp.Status = true;
+
+                    context.DepartmentsEmployees.Add(apiDepEmp.ToDepartmentEmployee());
+                    await context.SaveChangesAsync();
+                }
+
                 response.Success = true;
                 return response;
             }
@@ -46,10 +63,10 @@ namespace EnterpriseAdmin_BE.Core.Admin
                 var employees = context.Employees.Where(x => x.Id == modifiedEmployees.Id).FirstOrDefault();
                 if (employees != null)
                 {
-                    employees.CreatedBy = modifiedEmployees.CreatedBy;
-                    employees.CreatedDate = modifiedEmployees.CreatedDate;
-                    employees.ModifiedBy = modifiedEmployees.ModifiedBy;
-                    employees.ModifiedDate = modifiedEmployees.ModifiedDate;
+                    employees.CreatedBy = modifiedEmployees.Created_By;
+                    employees.CreatedDate = modifiedEmployees.Created_Date;
+                    employees.ModifiedBy = modifiedEmployees.Modified_By;
+                    employees.ModifiedDate = modifiedEmployees.Modified_Date;
                     employees.Status = modifiedEmployees.Status;
                     employees.Age = modifiedEmployees.Age;
                     employees.Email = modifiedEmployees.Email;
@@ -58,7 +75,36 @@ namespace EnterpriseAdmin_BE.Core.Admin
                     employees.Surname = modifiedEmployees.Surname;
 
                     await context.SaveChangesAsync();
-                    
+
+                    if (modifiedEmployees.idDepartment != 0 && modifiedEmployees.idDepartment != null)
+                    {
+                        ApiDepartmentsEmployee apiDepEmp = new ApiDepartmentsEmployee();
+                        apiDepEmp.IdEmployee = modifiedEmployees.Id;
+                        apiDepEmp.IdDepartment = modifiedEmployees.idDepartment;
+                        apiDepEmp.CreatedDate = modifiedEmployees.Created_Date;
+                        apiDepEmp.CreatedBy = modifiedEmployees.Created_By;
+                        apiDepEmp.ModifiedDate = DateTime.Now;
+                        apiDepEmp.ModifiedBy = modifiedEmployees.Modified_By;
+                        apiDepEmp.Status = true;
+
+                        context.DepartmentsEmployees.Add(apiDepEmp.ToDepartmentEmployee());
+                        await context.SaveChangesAsync();
+                    }
+                    else
+                    {
+
+                        ApiDepartmentsEmployee apiDepEmp = new ApiDepartmentsEmployee();
+                        apiDepEmp.IdEmployee = modifiedEmployees.Id;
+                        apiDepEmp.CreatedDate = modifiedEmployees.Created_Date;
+                        apiDepEmp.CreatedBy = modifiedEmployees.Created_By;
+                        apiDepEmp.ModifiedDate = DateTime.Now;
+                        apiDepEmp.ModifiedBy = modifiedEmployees.Modified_By;
+                        apiDepEmp.Status = false;
+
+                        context.DepartmentsEmployees.Add(apiDepEmp.ToDepartmentEmployee());
+                        await context.SaveChangesAsync();
+                    }
+
                     response.Success = true;
                     return response;
                 }

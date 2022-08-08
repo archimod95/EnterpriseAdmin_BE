@@ -15,15 +15,16 @@ namespace EnterpriseAdmin_BE.Extensions
             return new()
             {
                 Id = department.Id,
-                CreatedBy = department.CreatedBy,
-                CreatedDate = department.CreatedDate,
-                ModifiedBy = department.ModifiedBy,
-                ModifiedDate = department.ModifiedDate,
+                Created_By = department.CreatedBy,
+                Created_Date = department.CreatedDate,
+                Modified_By = department.ModifiedBy,
+                Modified_Date = department.ModifiedDate,
                 Status = department.Status,
                 Description = department.Description,
                 Name = department.Name,
                 Phone = department.Phone,
-                IdEnterprise = department.IdEnterprise
+                IdEnterprise = department.IdEnterprise,
+                EnterpriseName = department.IdEnterpriseNavigation?.Name
             };
         }
 
@@ -37,10 +38,10 @@ namespace EnterpriseAdmin_BE.Extensions
             return new()
             {
                 Id = department.Id,
-                CreatedBy = department.CreatedBy,
-                CreatedDate = department.CreatedDate,
-                ModifiedBy = department.ModifiedBy,
-                ModifiedDate = department.ModifiedDate,
+                CreatedBy = department.Created_By,
+                CreatedDate = department.Created_Date,
+                ModifiedBy = department.Modified_By,
+                ModifiedDate = department.Modified_Date,
                 Status = department.Status,
                 Description = department.Description,
                 Name = department.Name,

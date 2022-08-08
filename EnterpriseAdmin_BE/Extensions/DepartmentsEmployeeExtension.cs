@@ -40,7 +40,7 @@ namespace EnterpriseAdmin_BE.Extensions
                 ModifiedBy = departmentEmployee.ModifiedBy,
                 ModifiedDate = departmentEmployee.ModifiedDate,
                 Status = departmentEmployee.Status,
-                IdDepartment = departmentEmployee.Id,
+                IdDepartment = departmentEmployee.IdDepartment,
                 IdEmployee = departmentEmployee.IdEmployee
             };
         }

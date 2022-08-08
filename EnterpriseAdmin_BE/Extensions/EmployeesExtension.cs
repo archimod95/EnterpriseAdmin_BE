@@ -15,16 +15,17 @@ namespace EnterpriseAdmin_BE.Extensions
             return new()
             {
                 Id = employee.Id,
-                CreatedBy = employee.CreatedBy,
-                CreatedDate = employee.CreatedDate,
-                ModifiedBy = employee.ModifiedBy,
-                ModifiedDate = employee.ModifiedDate,
+                Created_By = employee.CreatedBy,
+                Created_Date = employee.CreatedDate,
+                Modified_By = employee.ModifiedBy,
+                Modified_Date = employee.ModifiedDate,
                 Status = employee.Status,
                 Age = employee.Age,
                 Email = employee.Email,
                 Name = employee.Name,
                 Position = employee.Position,
-                Surname = employee.Surname
+                Surname = employee.Surname,
+                idDepartment = employee.DepartmentsEmployees.Where(x => x.IdEmployee == employee.Id).Select(x=>x.IdDepartment).FirstOrDefault()
             };
         }
 
@@ -38,10 +39,10 @@ namespace EnterpriseAdmin_BE.Extensions
             return new()
             {
                 Id = employee.Id,
-                CreatedBy = employee.CreatedBy,
-                CreatedDate = employee.CreatedDate,
-                ModifiedBy = employee.ModifiedBy,
-                ModifiedDate = employee.ModifiedDate,
+                CreatedBy = employee.Created_By,
+                CreatedDate = employee.Created_Date,
+                ModifiedBy = employee.Modified_By,
+                ModifiedDate = employee.Modified_Date,
                 Status = employee.Status,
                 Age = employee.Age,
                 Email = employee.Email,

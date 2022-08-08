@@ -10,12 +10,24 @@ namespace EnterpriseAdmin_BE.Core.Admin
         public async static Task<IEnumerable<ApiDepartments>> getAllDepartmentsAsync(IConfiguration configuration)
         {
             MySqlDbContext context = new MySqlDbContext(configuration);
-            var departments = await context.Departments
-                                .AsNoTracking()
-                                .OrderBy(x => x.Name)
-                                .ToArrayAsync();
+            var departments = from dp in context.Departments
+                              join en in context.Enterprises on dp.IdEnterprise equals en.Id
+                              select new ApiDepartments
+                              {
+                                  Id = dp.Id,
+                                  Created_Date = dp.CreatedDate,
+                                  Created_By = dp.CreatedBy,
+                                  Modified_By = dp.ModifiedBy,
+                                  Modified_Date = dp.ModifiedDate,
+                                  Status = dp.Status,
+                                  Description = dp.Description,
+                                  Name = dp.Name,
+                                  Phone = dp.Phone,
+                                  IdEnterprise = en.Id,
+                                  EnterpriseName = en.Name
+                              };
 
-            return departments.ToApiDepartments();
+            return departments;
         }
 
         public async static Task<ApiResponse> createDepartmentAsync(IConfiguration configuration, ApiDepartments newDepartment)
@@ -24,8 +36,8 @@ namespace EnterpriseAdmin_BE.Core.Admin
             try
             {
                 MySqlDbContext context = new MySqlDbContext(configuration);
-                newDepartment.CreatedDate = DateTime.Now;
-                newDepartment.ModifiedDate = DateTime.Now;
+                newDepartment.Created_Date = DateTime.Now;
+                newDepartment.Modified_Date = DateTime.Now;
                 context.Departments.Add(newDepartment.ToDepartment());
                 await context.SaveChangesAsync();
 
@@ -48,9 +60,9 @@ namespace EnterpriseAdmin_BE.Core.Admin
                 var department = context.Departments.Where(x => x.Id == modifiedDepartment.Id).FirstOrDefault();
                 if (department != null)
                 {
-                    department.CreatedBy = modifiedDepartment.CreatedBy;
-                    department.CreatedDate = modifiedDepartment.CreatedDate;
-                    department.ModifiedBy = modifiedDepartment.ModifiedBy;
+                    department.CreatedBy = modifiedDepartment.Created_By;
+                    department.CreatedDate = modifiedDepartment.Created_Date;
+                    department.ModifiedBy = modifiedDepartment.Modified_By;
                     department.ModifiedDate = DateTime.Now;
                     department.Status = modifiedDepartment.Status;
                     department.Description = modifiedDepartment.Description;
@@ -72,6 +84,18 @@ namespace EnterpriseAdmin_BE.Core.Admin
                 response.Success = false;
                 return response;
             }
+        }
+
+        public async static Task<ApiDepartments> getDepartmentByIdAsync(IConfiguration configuration, int id)
+        {
+            MySqlDbContext context = new MySqlDbContext(configuration);
+            var department = await context.Departments
+                                .AsNoTracking()
+                                .Include(x => x.DepartmentsEmployees)
+                                .Where(x => x.Id == id)
+                                .FirstOrDefaultAsync();
+
+            return department.ToApiDepartment();
         }
     }
 }
